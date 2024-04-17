@@ -49,7 +49,7 @@ def import_loved(lib, log):
     if not user:
         raise ui.UserError("You must specify a username for lastloved")
 
-    log.info("Fetching last.fm library for @{0}", user)
+    log.info(f"Fetching last.fm library for @{user}...")
 
     track_total = 0
 
@@ -57,7 +57,7 @@ def import_loved(lib, log):
 
     track_total = len(loved_tracks)
 
-    log.info("Found {0} loved tracks", track_total)
+    log.info(f"Found {track_total} loved tracks")
 
     process_tracks(lib, loved_tracks, log)
 
@@ -95,7 +95,7 @@ def process_tracks(lib, tracks, log):
     total = len(tracks)
     total_found = 0
     total_fails = 0
-    log.info("Processing {0} tracks...", total)
+    log.info(f"Processing {total} tracks...")
 
     for num in range(0, total):
         song = None
@@ -105,7 +105,7 @@ def process_tracks(lib, tracks, log):
         if "album" in tracks[num]:
             album = tracks[num]["album"].strip() if tracks[num]["album"] else None
 
-        log.debug("query: {0} - {1} ({2})", artist, title, album)
+        log.debug(f"query: {artist} - {title} ({album})")
 
         # First try to query by MusicBrainz ID
         if trackid:
@@ -114,9 +114,7 @@ def process_tracks(lib, tracks, log):
         # If not, try with album and title
         if song is None and album:
             log.debug(
-                "no match from musicbrainz, trying by album/title: {0} - {1}",
-                album,
-                title,
+                f"no match from musicbrainz, trying by album/title: {album} - {title}"
             )
             query = dbcore.AndQuery(
                 [
@@ -151,10 +149,7 @@ def process_tracks(lib, tracks, log):
 
         if song is not None:
             log.debug(
-                "match: {0} - {1} ({2})" ", updating",
-                song.artist,
-                song.title,
-                song.album,
+                f"match: {song.artist} - {song.title} ({song.album})" ", updating"
             )
             song["loved"] = True
             song.store()
@@ -162,14 +157,11 @@ def process_tracks(lib, tracks, log):
             total_found += 1
         else:
             total_fails += 1
-            log.info("  - No match: {0} - {1} ({2})", artist, title, album)
+            log.info(f"  - No match: {artist} - {title} ({album})")
 
     if total_fails > 0:
         log.info(
-            "Updated {0}/{1} tracks ({2} unknown)",
-            total_found,
-            total,
-            total_fails,
+            f"Updated {total_found}/{total} tracks ({total_fails} unknown)"
         )
 
     return total_found, total_fails
