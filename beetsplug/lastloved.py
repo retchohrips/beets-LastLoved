@@ -1,7 +1,6 @@
-import pylast
 import mediafile
-
-from beets import plugins, config, dbcore, ui
+import pylast
+from beets import config, dbcore, plugins, ui
 from beets.dbcore import types
 
 
@@ -27,9 +26,13 @@ class LastLovedPlugin(plugins.BeetsPlugin):
         cmd = ui.Subcommand("lastloved", help="import last.fm loved tracks")
 
         def func(lib, opts, args):
-            self._log.info("deleting old values...")
+            num_cleared = 0
             for item in lib.items():
-                self.clear_old(item)
+                if item.get("loved", False):
+                    self.clear_old(item)
+                    num_cleared += 1
+            if num_cleared > 0:
+                self._log.info(f"Removing {num_cleared} old values...")
             import_loved(lib, self._log)
 
         cmd.func = func
