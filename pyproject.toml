@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "beets-lastloved"
-version = "0.1.0"
+version = "0.2"
 description = "Plugin for beets (https://beets.io) to import loved track values from last.fm"
 authors = ["retchohrips <44993244+retchohrips@users.noreply.github.com>"]
 readme = "README.md"
